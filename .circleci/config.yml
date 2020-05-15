@@ -1,18 +1,37 @@
 version: 2
 executorType: machine
 jobs:
-  build:
+  build-linux:
     steps:
       - checkout
 
       - restore_cache:
-          key: testcontainers-concord-{{ checksum "pom.xml" }}
+          key: testcontainers-concord-linux-{{ checksum "pom.xml" }}
 
       - run: ./mvnw -B dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
-          key: testcontainers-concord-{{ checksum "pom.xml" }}
+          key: testcontainers-concord-linux-{{ checksum "pom.xml" }}
+
+      - run: ./mvnw -B clean install
+
+  build-mac:
+    macos:
+      xcode: 11.0.0
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: testcontainers-concord-mac-{{ checksum "pom.xml" }}
+
+      - run: ./mvnw -B dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: testcontainers-concord-mac-{{ checksum "pom.xml" }}
 
       - run: ./mvnw -B clean install
